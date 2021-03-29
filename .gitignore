@@ -80,3 +80,7 @@ include/site/python3.8/greenlet/
     Blog
     About
 
+
+server/helper/__pycache__/
+
+server/services/__pycache__/

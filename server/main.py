@@ -1,6 +1,7 @@
 from flask import Flask,jsonify,request
 from flask_cors import CORS
-import json
+from helper import requestHelper
+from services import feedbackService
 #######################################################
 
 #configurations
@@ -23,6 +24,20 @@ def ping_pong():
 
 #######################################################
 #######################################################
+@app.route('/savefeedback', methods=['POST'])
+def saveFeedback():
+    try:
+        resultObj = {}
+        postParams = requestHelper.extractPayload(request)
+
+        feedbackObject = feedbackService.Feedback()
+        resultObj = feedbackObject.saveFeedback(postParams)
+
+        return jsonify(postParams)
+    except Exception as e:
+        resultObj["status"] = "error"
+        resultObj["message"] = str(e)
+        return jsonify(resultObj)
 
 
 
