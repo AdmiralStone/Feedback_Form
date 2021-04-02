@@ -84,3 +84,5 @@ include/site/python3.8/greenlet/
 server/helper/__pycache__/
 
 server/services/__pycache__/
+
+server/queries/__pycache__/

@@ -1,7 +1,10 @@
 import random
 from helper.dbHelper import mysqlDb
+from queries.feedbackQuery import queries
 from datetime import datetime
 import re
+import string
+import random
 
 
 mobileRegex = re.compile("[7-9][0-9]{9}")
@@ -56,12 +59,45 @@ class Feedback(Validation):
     def __init__(self):
         pass
 
-    def generaterefId():
-        pass
+    def generaterefId(self,postParams):
+        N = 7
+        refId = ''.join(random.choices(string.ascii_uppercase + string.digits,k=N))
+        postParams['referenceId'] = refId
+        return postParams
+
+    def saveFeedbackDB(self,postParams):
+        queryResultObj ={}
+        try:
+            ################################################
+            try:
+                mysqlCon = mysqlDb.cursor(dictionary =True,buffered=False)
+            except Exception as e:
+                print(e)
+                raise Exception("Error In DB Connection")
+            ################################################
+            refId = postParams.get('referenceId')
+            name = postParams.get('name')
+            mobile = postParams.get('mobile')
+            email = postParams.get('email')
+            subject = postParams.get('subject')
+            description = postParams.get('description')
+            now = datetime.now()
+            formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+            ################################################
+            queryResultObj = mysqlCon.execute(queries['saveFeedback'],(refId,name,mobile,email,subject,description,formatted_date))
+            ################################################
+        except Exception as e:
+            raise Exception(e)
+
 
     def saveFeedback(self,postParams):
         try:
             Validation.validateFeedback(postParams)
+
+            postParams = self.generaterefId(postParams)
+
+            self.saveFeedbackDB(postParams)
+            
             return postParams
         except Exception as e:
             raise Exception(e)
